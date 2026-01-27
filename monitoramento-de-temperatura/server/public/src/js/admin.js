@@ -1,6 +1,6 @@
 import { checkAcess } from './auth.js';
 import { roomsSearch, usersSearch, userRegister, userEdit, userDelete, roomDelete, roomRegister, roomEdit } from './api.js';
-import { carregarTemperaturas } from './main.js'
+import { carregarTemperaturas, alertMsg } from './main.js'
 import { gerarRelatorio } from './report.js'
 
 // --- verifica permissões ---
@@ -257,8 +257,9 @@ document.addEventListener('click', (e) => {
       const senha2 = document.getElementById("senha2").value;
 
       if (senha !== senha2) {
-        const alerta = document.getElementById("responseUser");
-        alerta.innerText = "As senhas devem ser iguais!";
+
+        const msgAlert = "As senhas devem ser iguais!";
+        alertMsg('responseUser', msgAlert,'erro');
 
         // Limpa o texto de alerta depois de 3 segundos
         setTimeout(() => { alerta.innerText = ""; }, 7000);
@@ -271,12 +272,8 @@ document.addEventListener('click', (e) => {
         console.log(data);
 
         if (data && data.id) {
-          alertMsg('responseUser', 'sucesso');
-          const alerta = document.getElementById("responseUser");
-          alerta.innerText = `Usuário ${data.name} cadastrado com sucesso!`;
-
-          // Limpa o texto de alerta depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          const msgAlert = `Usuário ${data.name} cadastrado com sucesso!`;
+          alertMsg('responseUser', msgAlert,'sucesso');
 
           //Limpa o formulário
           document.getElementById("userForm").reset();
@@ -284,19 +281,15 @@ document.addEventListener('click', (e) => {
         } else {
 
           // alerta de erro;
-          alertMsg('responseUser', 'erro');
-          const alerta = document.getElementById("responseUser");
-          alerta.innerText = data.erro || data.message || "Erro desconhecido no cadastro";
-          // Limpa o texto depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          const msgAlert = data.erro || data.message || "Erro desconhecido no cadastro";
+          alertMsg('responseUser', msgAlert, 'erro');
+
         }
       } catch (error) {
-        alertMsg('responseUser', 'erro');
-                  // alerta de erro;
-          const alerta = document.getElementById("responseUser");
-          alerta.innerText = error.message;
-          // Limpa o texto depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          // alerta de erro;
+          const msgAlert = error.message;
+          alertMsg('responseUser', msgAlert, 'erro');
+          
       }
     };
 
@@ -317,12 +310,8 @@ document.addEventListener('click', (e) => {
         console.log(data);
 
         if (data && data._id) {
-          const alerta = document.getElementById("responseRoom");
-          alertMsg('responseRoom', 'sucesso');
-          alerta.innerText = `Ambiente ${data.name} cadastrado com sucesso!`;
-
-          // Limpa o texto de alerta depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          const msgAlert = `Ambiente ${data.name} cadastrado com sucesso!`;
+          alertMsg('responseRoom', msgAlert, 'sucesso');
 
           //Limpa o formulário
           document.getElementById("roomForm").reset();
@@ -330,19 +319,13 @@ document.addEventListener('click', (e) => {
         } else {
 
           // alerta de erro;
-          const alerta = document.getElementById("responseRoom");
-          alertMsg('responseRoom', 'alert');
-          alerta.innerText = data.erro || data.message || "Erro desconhecido no cadastro";
-          // Limpa o texto depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          const msgAlert = data.erro || data.message || "Erro desconhecido no cadastro";
+          alertMsg('responseRoom', msgAlert, 'alert');
         }
       } catch (error) {
-                          // alerta de erro;
-          const alerta = document.getElementById("responseRoom");
-          alertMsg('responseRoom', 'erro');
-          alerta.innerText = error.message;
-          // Limpa o texto depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          // alerta de erro;
+          const msgAlert = error.message;
+          alertMsg('responseRoom', msgAlert, 'erro');
       }
     };
   } else if (e.target.classList.contains('emitirRelatorio')) {
@@ -395,7 +378,7 @@ function abrirModal(modalId, closeBtnSelector) {
 //     const senha2 = document.getElementById("senha2").value;
 
 //     if (senha !== senha2) {
-//         const alerta = document.getElementById("response");
+//         const msgAlert = document.getElementById("response");
 //         alerta.innerText = "As senhas devem ser iguais!";
 
 //         // Limpa o texto de alerta depois de 3 segundos
@@ -409,7 +392,7 @@ function abrirModal(modalId, closeBtnSelector) {
 //       console.log(data);
 
 //       if (data && data.id) {
-//         const alerta = document.getElementById("response");
+//         const msgAlert = document.getElementById("response");
 //         alerta.innerText = `Usuário ${data.name} cadastrado com sucesso!`;
 
 //         // Limpa o texto de alerta depois de 3 segundos
@@ -420,7 +403,7 @@ function abrirModal(modalId, closeBtnSelector) {
 //       } else {
 
 //         // alerta de erro;
-//         const alerta = document.getElementById("response");
+//         const msgAlert = document.getElementById("response");
 //         alerta.innerText = data.erro || data.message || "Erro desconhecido no cadastro";
 //         // Limpa o texto depois de 3 segundos
 //         setTimeout(() => {alerta.innerText = "";}, 3000);
@@ -487,36 +470,36 @@ async function editarSala(id) {
       const nome = document.getElementById("roomNameEdit").value;
       const micro = document.getElementById("roomMicroEdit").value;
       //requisicao da API para editar sala
+
+      if (!nome || !micro){
+        const msgAlert = 'Preencha todos os campos antes de salvar.';
+        alertMsg('responseRoomEdit', msgAlert, 'erro');
+
+        return;        
+      }
       const data = await roomEdit(id, nome, micro);
       console.log(data);
 
       if (data && data._id) {
-        const alerta = document.getElementById("responseRoomEdit");
-        alertMsg('responseRoomEdit', 'sucesso');
-        alerta.innerText = `Ambiente ${data.name} editado com sucesso!`;
-
-        // Limpa o texto de alerta depois de 3 segundos
-        setTimeout(() => { alerta.innerText = ""; }, 7000);
-
+        const msgAlert = `Ambiente ${data.name} editado com sucesso!`;
+        alertMsg('responseRoomEdit', msgAlert, 'sucesso');
+        
         //Limpa o formulário
         document.getElementById("roomFormEdit").reset();
         await renderSalas();
       } else {
 
         // alerta de erro;
-        const alerta = document.getElementById("responseRoomEdit");
-        alertMsg('responseRoomEdit', 'erro');
-        alerta.innerText = data.erro || data.message || "Erro desconhecido na edição";
-        // Limpa o texto depois de 3 segundos
-        setTimeout(() => { alerta.innerText = ""; }, 7000);
+        const msgAlert = data.erro || data.message || "Erro desconhecido na edição";
+        alertMsg('responseRoomEdit', msgAlert, 'erro');
+        
+
       }
     } catch (error) {
-                                // alerta de erro;
-          const alerta = document.getElementById("responseRoom");
-          alertMsg('responseRoomEdit', 'erro');
-          alerta.innerText = error.message;
-          // Limpa o texto depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          // alerta de erro;
+          const msgAlert = error.message;
+          alertMsg('responseRoomEdit', msgAlert, 'erro');
+
     }
   };
 }
@@ -554,21 +537,21 @@ async function editarUsuario(id) {
       //requisicao da API para editar sala
 
       if (senha != senha2) {
-        const alerta = document.getElementById("responseUserEdit");
-        alertMsg('responseUserEdit', 'erro');
-        alerta.innerText = "As senhas devem ser iguais!";
+        const msgAlert = "As senhas devem ser iguais!";
+        alertMsg('responseUserEdit', msgAlert, 'erro');
+        return;
+
+      } else if (!nome || !email){
+        const msgAlert = "Preencha todos os campos antes de salvar.";
+        alertMsg('responseUserEdit', msgAlert, 'erro');
         return;
       }
       const data = await userEdit(id, nome, email, senha);
       console.log(data);
 
       if (data && data._id) {
-        const alerta = document.getElementById("responseUserEdit");
-        alertMsg('responseUserEdit', 'sucesso');
-        alerta.innerText = `Usuário ${data.name} editado com sucesso!`;
-
-        // Limpa o texto de alerta depois de 3 segundos
-        setTimeout(() => { alerta.innerText = ""; }, 7000);
+        const msgAlert = `Usuário ${data.name} editado com sucesso!`;
+        alertMsg('responseUserEdit', msgAlert, 'sucesso');
 
         //Limpa o formulário
         document.getElementById("userFormEdit").reset();
@@ -576,19 +559,14 @@ async function editarUsuario(id) {
       } else {
 
         // alerta de erro;
-        const alerta = document.getElementById("responseUserEdit");
-        alertMsg('responseUserEdit', 'erro');
-        alerta.innerText = data.erro || data.message || "Erro desconhecido na edição";
-        // Limpa o texto depois de 3 segundos
-        setTimeout(() => { alerta.innerText = ""; }, 7000);
+        const msgAlert = data.erro || data.message || "Erro desconhecido na edição";
+        alertMsg('responseUserEdit',msgAlert, 'erro');
+
       }
     } catch (error) {
-                                // alerta de erro;
-          const alerta = document.getElementById("responseUserEdit");
-          alertMsg('responseUserEdit', 'erro');
-          alerta.innerText = error.message;
-          // Limpa o texto depois de 3 segundos
-          setTimeout(() => { alerta.innerText = ""; }, 7000);
+          // alerta de erro;
+          const msgAlert = error.message;
+          alertMsg('responseUserEdit', msgAlert, 'erro');
     }
   };
 }
@@ -710,16 +688,3 @@ function clickMenu() {
 }
 
 
-function alertMsg(elementId, tipo = 'erro'){
-  const el = document.getElementById(elementId);
-  if(tipo == 'erro'){
-  
-    el.classList.remove('alert-sucess');
-    el.classList.add('alert');
-
-  }else{
-
-    el.classList.remove('alert');
-    el.classList.add('alert-sucess');
-  }
-}

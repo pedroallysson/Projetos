@@ -1,5 +1,6 @@
 
 import { roomTempInterval, roomsSearch } from "./api.js";
+import { alertMsg } from "./main.js";
 
 //gerar opções do menu relario dinamicamente
 async function gerarOptions() {
@@ -40,15 +41,28 @@ export async function gerarRelatorio() {
   const start = document.getElementById('start').value; // YYYY-MM-DD
   const end = document.getElementById('end').value;     // YYYY-MM-DD
 
+  if (!idRoom){
+    const msgAlert = "É necessário informar o local.";
+    alertMsg('alertRelatorio', msgAlert,'erro');
+
+    return;
+  }
+
   try {
+    const msgAlert1 = "Gerando relatório, por favor aguarde!";
+    alertMsg('alertRelatorio', msgAlert1,'sucesso');
     const dados = await roomTempInterval(idRoom, start, end);
     console.log(dados);
 
     if (!dados.length) {
-      window.alert("Sem dados para o período");
+      const msgAlert = "Sem dados para o período informado.";
+      alertMsg('alertRelatorio', msgAlert,'erro');
+
       return;
     }
 
+    const msgAlert = "Relatório gerado com sucesso!";
+    alertMsg('alertRelatorio', msgAlert,'sucesso');
     // Monta CSV
     const csvHeader = 'Data;Temperatura;Umidade\n';
     const csvRows = dados.map(salas => {
@@ -62,7 +76,8 @@ export async function gerarRelatorio() {
     downloadCSV(csvContent, `relatorio_${start}_${Date.now()}.csv`);
 
   } catch (erro){
-    window.alert(` ${erro.message}`);
+    const msgAlert = erro.message;
+    alertMsg('alertRelatorio', msgAlert,'erro');
   }
 };
 

@@ -111,6 +111,27 @@ function sortRoom(salas) {
   });
 }
 
+
+//função para imprimir alertas personalizadas de acordo com a situação.
+export function alertMsg(elementId, msg, tipo = 'erro'){
+  const msgAlert = document.getElementById(elementId);
+  msgAlert.innerText = msg ;
+  
+  if(tipo == 'erro'){
+  
+    msgAlert.classList.remove('alert-sucess');
+    msgAlert.classList.add('alert');
+
+  }else{
+
+    msgAlert.classList.remove('alert');
+    msgAlert.classList.add('alert-sucess');
+  }
+
+  //msg é apagada da tela apos 7 segundos
+  setTimeout(() => { msgAlert.innerText = ""; }, 7000);
+}
+
 //eventListener de logout
 document.getElementById("logoutBtn").addEventListener("click", async function () {
 
