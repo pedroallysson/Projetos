@@ -81,8 +81,3 @@ function downloadCSV(content, filename) {
   }
 }
 
-//eventListener de logout
-document.getElementById("logoutBtn").addEventListener("click", async function () {
-  localStorage.removeItem("token");
-  window.location.href = "login.html";
-});

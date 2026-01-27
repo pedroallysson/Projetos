@@ -245,7 +245,7 @@ button {
     left: 0;
     height: calc(100vh - 5rem);
     width: 70%;
-    max-width: 280px;
+    /* max-width: 280px; */
 
     background-color: #ffffff;
     border-right: 1px solid rgb(219, 218, 218);

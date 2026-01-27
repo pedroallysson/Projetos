@@ -2,7 +2,7 @@
 const params = new URLSearchParams(window.location.search);
 const salaAtual = params.get("sala");
 
-import { checkAcess } from './auth.js';
+import { checkAcess, logoutUser } from './auth.js';
 import { buscarTemperaturaSala, roomTempInterval } from './api.js';
 import { createGauge } from './components/gauge.js';
 import { tempChart, umidChart } from './components/charts.js';
@@ -133,7 +133,6 @@ setInterval(atualizarGraficos, 60000);
 
 //eventListener de logout
 document.getElementById("logoutBtn").addEventListener("click", async function () {
-  localStorage.removeItem("token");
-  window.location.href = "login.html";
-});
 
+  logoutUser();
+});
