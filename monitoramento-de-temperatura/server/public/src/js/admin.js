@@ -204,7 +204,7 @@ links.forEach(link => {
                     <input id="start" class="date" type="date">
                     <label>à </label>
                     <input id="end" class="date" type="date">
-                    <button type="button" class="btn emitirRelatorio">Baixar</button>
+                    <button type="button" class="btn emitirRelatorio">Emitir</button>
                 </div>
                 
                 `;

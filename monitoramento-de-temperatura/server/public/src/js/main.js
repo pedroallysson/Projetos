@@ -113,23 +113,31 @@ function sortRoom(salas) {
 
 
 //função para imprimir alertas personalizadas de acordo com a situação.
-export function alertMsg(elementId, msg, tipo = 'erro'){
+let alertTimeout; // variável global para controlar o timeout
+
+export function alertMsg(elementId, msg, tipo = 'erro', duration = 7000){
+
   const msgAlert = document.getElementById(elementId);
-  msgAlert.innerText = msg ;
-  
-  if(tipo == 'erro'){
-  
+
+  if (alertTimeout) {
+    clearTimeout(alertTimeout);
+  }
+
+  msgAlert.innerHTML = msg;
+
+  if(tipo === 'erro'){
     msgAlert.classList.remove('alert-sucess');
     msgAlert.classList.add('alert');
-
-  }else{
-
+  } else {
     msgAlert.classList.remove('alert');
     msgAlert.classList.add('alert-sucess');
   }
 
-  //msg é apagada da tela apos 7 segundos
-  setTimeout(() => { msgAlert.innerText = ""; }, 7000);
+  if (duration !== null){
+    alertTimeout = setTimeout(() => {
+      msgAlert.innerHTML = "";
+    }, duration);
+  }
 }
 
 //eventListener de logout
