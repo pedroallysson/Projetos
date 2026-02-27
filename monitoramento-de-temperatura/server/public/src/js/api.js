@@ -392,7 +392,7 @@ export async function passwordEdit(id, currentPass, newPass) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Erro ao atualizar senha");
+      throw new Error(data.message || data.erro || "Erro ao atualizar senha");
     }
 
 

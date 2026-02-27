@@ -1,5 +1,5 @@
 import { checkAcess } from './auth.js';
-import { roomsSearch, usersSearch, userRegister, userEdit, userDelete, roomDelete, roomRegister, roomEdit } from './api.js';
+import { roomsSearch, usersSearch, userRegister, userEdit, userDelete, roomDelete, roomRegister, roomEdit, passwordEdit } from './api.js';
 import { carregarTemperaturas, alertMsg } from './main.js'
 import { gerarRelatorio } from './report.js'
 
@@ -38,7 +38,6 @@ async function renderSalas() {
                                 <tr>
                                 <th scope="col">Ambiente</th>
                                 <th scope="col">Microcontrolador</th>
-                                <th scope="col">ID</th>
                                 <th scope="col">Ações</th>
                             </tr>
                             </thead>
@@ -54,7 +53,6 @@ async function renderSalas() {
     row.innerHTML = `
                             <td>${sala.name.toUpperCase()}</td>
                             <td>${sala.microcontrollerId}</td>
-                            <td>${sala._id}</td>
                             <td>
                             <button data-id="${sala._id}" class="btn-warning editarSala" >Editar</button>
                             <button data-id="${sala._id}" class="btn excluirSala">Excluir</button>
@@ -103,7 +101,6 @@ async function renderUsuarios() {
                                 <tr>
                                     <th scope="col">Usuário</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">ID</th>
                                     <th scope="col">Ações</th>
                                 </tr>
                             </thead>
@@ -119,9 +116,9 @@ async function renderUsuarios() {
     row.innerHTML = `
           <td>${sala.name.toUpperCase()}</td>
           <td>${sala.email}</td>
-          <td>${sala._id}</td>
           <td>
           <button data-id="${sala._id}" class="btn-warning editarUsuario" >Editar</button>
+          <button data-id="${sala._id}" class="btn-warning editarPassUsuario" >Trocar Senha</button>
           <button data-id="${sala._id}" class="btn excluirUsuario">Excluir</button>
         </td>
         `;
@@ -437,6 +434,9 @@ document.addEventListener('click', function (e) {
   } else if (e.target && e.target.classList.contains('editarUsuario')) {
     const id = e.target.getAttribute('data-id');
     editarUsuario(id);
+  } else if (e.target && e.target.classList.contains('editarPassUsuario')) {
+    const id = e.target.getAttribute('data-id');
+    editarPass(id);
   }
 });
 
@@ -532,22 +532,16 @@ async function editarUsuario(id) {
     try {
       const nome = document.getElementById("nameEdit").value;
       const email = document.getElementById("emailEdit").value;
-      const senha = document.getElementById('senhaEdit').value;
-      const senha2 = document.getElementById('senha2Edit').value;
-      //requisicao da API para editar sala
 
-      if (senha != senha2) {
-        const msgAlert = "As senhas devem ser iguais!";
-        alertMsg('responseUserEdit', msgAlert, 'erro');
-        return;
 
-      } else if (!nome || !email){
+      if (!nome || !email){
         const msgAlert = "Preencha todos os campos antes de salvar.";
         alertMsg('responseUserEdit', msgAlert, 'erro');
         return;
       }
-      const data = await userEdit(id, nome, email, senha);
-      console.log(data);
+      
+      //requisicao da API para editar sala
+      const data = await userEdit(id, nome, email);
 
       if (data && data._id) {
         const msgAlert = `Usuário ${data.name} editado com sucesso!`;
@@ -567,6 +561,51 @@ async function editarUsuario(id) {
           // alerta de erro;
           const msgAlert = error.message;
           alertMsg('responseUserEdit', msgAlert, 'erro');
+    }
+  };
+}
+
+
+// Funcao editar senha do usuário
+async function editarPass(id) {
+  // Mostrar o modal
+  abrirModal('modalPassEdit', '#passCloseBtn');
+
+
+  const editar = document.getElementById("passEditBtn");
+  editar.onclick = async (e) => {
+    e.preventDefault();
+
+    try {
+      const currentPass = document.getElementById("currentPass").value;
+      const newPass = document.getElementById("newPass").value;
+      const confirmPass = document.getElementById("confirmPass").value;
+   
+      //requisicao da API para editar senha usuario
+
+      if (!currentPass || !newPass || !confirmPass ){
+        alertMsg('responsePassEdit', "Preencha todos os campos", 'erro');  
+        return;
+      }
+
+      if (newPass !== confirmPass){
+        alertMsg('responsePassEdit', "As novas senhas não correspondem", 'erro'); 
+        return;   
+      }
+
+      const data = await passwordEdit(id, currentPass, newPass);
+      console.log(data);
+
+      const msgAlert = `${data.message}`;
+      alertMsg('responsePassEdit', msgAlert, 'sucesso');
+
+        //Limpa o formulário
+      document.getElementById("passFormEdit").reset();
+
+    } catch (error) {
+          // alerta de erro;
+          const msgAlert = error.message;
+          alertMsg('responsePassEdit', msgAlert, 'erro');
     }
   };
 }
