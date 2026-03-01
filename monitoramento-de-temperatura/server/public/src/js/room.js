@@ -4,7 +4,7 @@ const salaAtual = params.get("sala");
 
 import { checkAcess, logoutUser } from './auth.js';
 import { buscarTemperaturaSala, roomTempInterval } from './api.js';
-import { createGauge, createGaugeAdmin } from './components/gauge.js';
+import { createGauge } from './components/gauge.js';
 import { tempChart, umidChart } from './components/charts.js';
 
 
@@ -67,7 +67,7 @@ async function roomUpdate() {
               </div>
           </div>    
         `;
-      createGaugeAdmin(tempGaugeId, humGaugeId, ultimaLeitura);
+      createGauge(tempGaugeId, humGaugeId, ultimaLeitura);
 
     } else {
       const body = document.body;
@@ -134,13 +134,15 @@ async function atualizarGraficos() {
     const umidades = [];
 
     dados.forEach(item => {
-      const hora = new Date(item.timestamp).getHours();
-      const horaFormatada = `${hora.toString().padStart(2, "0")}h`;
+      const date = new Date(item.timestamp);
+      const hora = date.getHours().toString().padStart(2, "0");
+      const minutos = date.getMinutes().toString().padStart(2, "0");
+      const horaFormatada = `${hora}:${minutos}h`;
 
       labels.push(horaFormatada);
       temperaturas.push(item.temperature);
       umidades.push(item.humidity);
-    });
+});
 
     // Atualiza gráfico de temperatura
     tempChart.data.labels = labels;
